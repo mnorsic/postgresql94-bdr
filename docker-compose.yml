@@ -1,0 +1,40 @@
+version: '2'
+services:
+  bdr1:
+    build: .
+    container_name: bdr1
+    hostname: bdr1
+    networks:
+      - my-net
+    ports:
+      - "5598:5598"
+    volumes:
+      - bdr1_data:/var/lib/postgresql/data
+    environment:
+      NODE_NAME: bdr1
+      NODE_PORT: '5598'
+      PRIMARY_NODE: 'true'
+  bdr2:
+    build: .
+    container_name: bdr2
+    hostname: bdr2
+    networks:
+    - my-net
+    ports:
+      - "5599:5599"
+    volumes:
+      - bdr2_data:/var/lib/postgresql/data
+    environment:
+      NODE_NAME: bdr2
+      NODE_PORT: '5599'
+      PRIMARY_NODE: 'false'
+      PRIMARY_NODE_NAME: 'bdr1'
+      PRIMARY_NODE_PORT: '5598'
+    depends_on:
+      - bdr1
+networks:
+  my-net:
+    driver: bridge
+volumes:
+  bdr1_data: {}
+  bdr2_data: {}
